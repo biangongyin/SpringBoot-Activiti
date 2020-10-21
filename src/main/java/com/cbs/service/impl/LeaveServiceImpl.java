@@ -1,5 +1,6 @@
 package com.cbs.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,7 +39,10 @@ public class LeaveServiceImpl implements LeaveService{
 	TaskService taskservice;
 	
 	public ProcessInstance startWorkflow(LeaveApply apply, String userid, Map<String, Object> variables) {
-		apply.setApply_time(new Date().toString());
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date = new Date();
+		String dateTime = format.format(date);
+		apply.setApply_time(dateTime);
 		apply.setUser_id(userid);
 		leavemapper.save(apply);
 		String businesskey=String.valueOf(apply.getId());//使用leaveapply表的主键作为businesskey,连接业务数据和流程数据
