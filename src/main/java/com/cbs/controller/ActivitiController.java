@@ -395,24 +395,42 @@ public class ActivitiController {
 
 	@RequestMapping(value = "/task/deptcomplete/{taskid}", method = RequestMethod.POST)
 	@ResponseBody
+	/**
+	 * 部门审批
+	 * @param session
+	 * @param taskid
+	 * @param req
+	 * @return
+	 */
 	public MSG deptcomplete(HttpSession session, @PathVariable("taskid") String taskid, HttpServletRequest req) {
 		String userid = (String) session.getAttribute("username");
 		Map<String, Object> variables = new HashMap<String, Object>();
 		String approve = req.getParameter("deptleaderapprove");
 		variables.put("deptleaderapprove", approve);
+		//根据任务id和用户领取任务
 		taskservice.claim(taskid, userid);
+		//根据任务id完成自己节点的任务
 		taskservice.complete(taskid, variables);
 		return new MSG("success");
 	}
 
 	@RequestMapping(value = "/task/hrcomplete/{taskid}", method = RequestMethod.POST)
 	@ResponseBody
+	/**
+	 * 人事审批
+	 * @param session
+	 * @param taskid
+	 * @param req
+	 * @return
+	 */
 	public MSG hrcomplete(HttpSession session, @PathVariable("taskid") String taskid, HttpServletRequest req) {
 		String userid = (String) session.getAttribute("username");
 		Map<String, Object> variables = new HashMap<String, Object>();
 		String approve = req.getParameter("hrapprove");
 		variables.put("hrapprove", approve);
+		//根据任务id和用户领取任务
 		taskservice.claim(taskid, userid);
+		//根据任务id完成自己节点的任务
 		taskservice.complete(taskid, variables);
 		return new MSG("success");
 	}
