@@ -16,7 +16,7 @@ import io.swagger.annotations.Api;
 
 @Api(value = "登录登出接口")
 @Controller
-public class Login {
+public class LoginController {
 	@Autowired
 	LoginService loginservice;
 	

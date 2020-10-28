@@ -1,5 +1,6 @@
 package com.cbs.pagemodel;
 
+import com.cbs.po.BimLeaveApply;
 import com.cbs.po.LeaveApply;
 import com.cbs.po.PurchaseApply;
 
@@ -7,6 +8,7 @@ public class HistoryProcess {
 	String processDefinitionId;
 	String businessKey;
 	LeaveApply leaveapply;
+	BimLeaveApply bimLeaveapply;
 	PurchaseApply purchaseapply;
 	public String getProcessDefinitionId() {
 		return processDefinitionId;
@@ -32,6 +34,11 @@ public class HistoryProcess {
 	public void setPurchaseapply(PurchaseApply purchaseapply) {
 		this.purchaseapply = purchaseapply;
 	}
-	
+	public BimLeaveApply getBimLeaveapply() {
+		return bimLeaveapply;
+	}
+	public void setBimLeaveapply(BimLeaveApply bimLeaveapply) {
+		this.bimLeaveapply = bimLeaveapply;
+	}
 	
 }

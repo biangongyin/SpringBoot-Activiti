@@ -1,0 +1,17 @@
+﻿#current {
+    border-width: 0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 162px;
+    height: 73px;
+}
+
+#current_text {
+    border-width: 0px;
+    position: absolute;
+    left: 2px;
+    top: 27px;
+    width: 158px;
+    word-wrap: break-word;
+}

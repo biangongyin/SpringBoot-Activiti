@@ -5,7 +5,7 @@
 	    	navigation:2,
   			columnSelection:false,
 		    ajax:true,
-		    url:"setupprocess",
+		    url:"getbimprocessList",
 		    formatters: {
 		    "commands": function(column, row)
 		    {

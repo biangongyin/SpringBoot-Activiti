@@ -22,15 +22,15 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cbs.mapper.LeaveApplyMapper;
-import com.cbs.po.LeaveApply;
-import com.cbs.service.LeaveService;
+import com.cbs.mapper.BimLeaveApplyMapper;
+import com.cbs.po.BimLeaveApply;
+import com.cbs.service.BimLeaveService;
 
-@Transactional(propagation=Propagation.REQUIRED,isolation=Isolation.DEFAULT,timeout=5)
+@Transactional(propagation=Propagation.REQUIRED,isolation=Isolation.DEFAULT,timeout=5000)
 @Service
-public class LeaveServiceImpl implements LeaveService{
+public class BimLeaveServiceImpl implements BimLeaveService{
 	@Autowired
-	LeaveApplyMapper leavemapper;
+	BimLeaveApplyMapper bimLeavemapper;
 	@Autowired
 	IdentityService identityservice;
 	@Autowired
@@ -38,31 +38,37 @@ public class LeaveServiceImpl implements LeaveService{
 	@Autowired
 	TaskService taskservice;
 	
-	public ProcessInstance startWorkflow(LeaveApply apply, String userid, Map<String, Object> variables) {
+	/**
+	 * 发起流程
+	 */
+	public ProcessInstance startWorkflow(BimLeaveApply apply, String userid, Map<String, Object> variables) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date();
 		String dateTime = format.format(date);
 		apply.setApply_time(dateTime);
 		apply.setUser_id(userid);
-		leavemapper.save(apply);
+		bimLeavemapper.save(apply);
 		String businesskey=String.valueOf(apply.getId());//使用leaveapply表的主键作为businesskey,连接业务数据和流程数据
 		identityservice.setAuthenticatedUserId(userid);
-		ProcessInstance instance=runtimeservice.startProcessInstanceByKey("leave",businesskey,variables);
+		ProcessInstance instance=runtimeservice.startProcessInstanceByKey("bimProcess",businesskey,variables);
 		System.out.println(businesskey);
 		String instanceid=instance.getId();
 		apply.setProcess_instance_id(instanceid);
-		leavemapper.updateByPrimaryKey(apply);
+		bimLeavemapper.updateByPrimaryKey(apply);
 		return instance;
 	}
-
-	public List<LeaveApply> getpagedepttask(String userid,int firstrow,int rowcount) {
-		List<LeaveApply> results=new ArrayList<LeaveApply>();
+	
+	/**
+	 * 部门经理审批
+	 */
+	public List<BimLeaveApply> getpagedepttask(String userid,int firstrow,int rowcount) {
+		List<BimLeaveApply> results=new ArrayList<BimLeaveApply>();
 		List<Task> tasks=taskservice.createTaskQuery().taskCandidateGroup("部门经理").listPage(firstrow, rowcount);
 		for(Task task:tasks){
 			String instanceid=task.getProcessInstanceId();
 			ProcessInstance ins=runtimeservice.createProcessInstanceQuery().processInstanceId(instanceid).singleResult();
 			String businesskey=ins.getBusinessKey();
-			LeaveApply a=leavemapper.getLeaveApply(Integer.parseInt(businesskey));
+			BimLeaveApply a=bimLeavemapper.getBimLeaveApply(Integer.parseInt(businesskey));
 			if (a == null) {
 				continue;
 			}
@@ -77,19 +83,22 @@ public class LeaveServiceImpl implements LeaveService{
 		return tasks.size();
 	}
 
-	public LeaveApply getleave(int id) {
-		LeaveApply leave=leavemapper.getLeaveApply(id);
+	public BimLeaveApply getleave(int id) {
+		BimLeaveApply leave=bimLeavemapper.getBimLeaveApply(id);
 		return leave;
 	}
 
-	public List<LeaveApply> getpagehrtask(String userid,int firstrow,int rowcount) {
-		List<LeaveApply> results=new ArrayList<LeaveApply>();
+	public List<BimLeaveApply> getpagehrtask(String userid,int firstrow,int rowcount) {
+		List<BimLeaveApply> results=new ArrayList<BimLeaveApply>();
 		List<Task> tasks=taskservice.createTaskQuery().taskCandidateGroup("人事").listPage(firstrow, rowcount);
 		for(Task task:tasks){
 			String instanceid=task.getProcessInstanceId();
 			ProcessInstance ins=runtimeservice.createProcessInstanceQuery().processInstanceId(instanceid).singleResult();
 			String businesskey=ins.getBusinessKey();
-			LeaveApply a=leavemapper.getLeaveApply(Integer.parseInt(businesskey));
+			BimLeaveApply a=bimLeavemapper.getBimLeaveApply(Integer.parseInt(businesskey));
+			if (a == null) {
+				continue;
+			}
 			a.setTask(task);
 			results.add(a);
 		}
@@ -101,62 +110,24 @@ public class LeaveServiceImpl implements LeaveService{
 		return tasks.size();
 	}
 	
-	public List<LeaveApply> getpageXJtask(String userid,int firstrow,int rowcount) {
-		List<LeaveApply> results=new ArrayList<LeaveApply>();
-		List<Task> tasks=taskservice.createTaskQuery().taskCandidateOrAssigned(userid).taskName("销假").listPage(firstrow, rowcount);
-		for(Task task:tasks){
-			String instanceid=task.getProcessInstanceId();
-			ProcessInstance ins=runtimeservice.createProcessInstanceQuery().processInstanceId(instanceid).singleResult();
-			String businesskey=ins.getBusinessKey();
-			LeaveApply a=leavemapper.getLeaveApply(Integer.parseInt(businesskey));
-			a.setTask(task);
-			results.add(a);
-		}
-		return results;
-	}
-
-	public int getallXJtask(String userid) {
-		List<Task> tasks=taskservice.createTaskQuery().taskCandidateOrAssigned(userid).taskName("销假").list();
-		return tasks.size();
-	}
-	
-	public List<LeaveApply> getpageupdateapplytask(String userid,int firstrow,int rowcount) {
-		List<LeaveApply> results=new ArrayList<LeaveApply>();
-		List<Task> tasks=taskservice.createTaskQuery().taskCandidateOrAssigned(userid).taskName("调整申请").listPage(firstrow, rowcount);
-		for(Task task:tasks){
-			String instanceid=task.getProcessInstanceId();
-			ProcessInstance ins=runtimeservice.createProcessInstanceQuery().processInstanceId(instanceid).singleResult();
-			String businesskey=ins.getBusinessKey();
-			LeaveApply a=leavemapper.getLeaveApply(Integer.parseInt(businesskey));
-			a.setTask(task);
-			results.add(a);
-		}
-		return results;
-	}
-	
-	public int getallupdateapplytask(String userid) {
-		List<Task> tasks=taskservice.createTaskQuery().taskCandidateOrAssigned(userid).taskName("调整申请").list();
-		return tasks.size();
-	}
-	
 	public void completereportback(String taskid, String realstart_time, String realend_time) {
 		Task task=taskservice.createTaskQuery().taskId(taskid).singleResult();
 		String instanceid=task.getProcessInstanceId();
 		ProcessInstance ins=runtimeservice.createProcessInstanceQuery().processInstanceId(instanceid).singleResult();
 		String businesskey=ins.getBusinessKey();
-		LeaveApply a=leavemapper.getLeaveApply(Integer.parseInt(businesskey));
+		BimLeaveApply a=bimLeavemapper.getBimLeaveApply(Integer.parseInt(businesskey));
 		a.setReality_start_time(realstart_time);
 		a.setReality_end_time(realend_time);
-		leavemapper.updateByPrimaryKey(a);
+		bimLeavemapper.updateByPrimaryKey(a);
 		taskservice.complete(taskid);
 	}
 
-	public void updatecomplete(String taskid, LeaveApply leave,String reapply) {
+	public void updatecomplete(String taskid, BimLeaveApply leave,String reapply) {
 		Task task=taskservice.createTaskQuery().taskId(taskid).singleResult();
 		String instanceid=task.getProcessInstanceId();
 		ProcessInstance ins=runtimeservice.createProcessInstanceQuery().processInstanceId(instanceid).singleResult();
 		String businesskey=ins.getBusinessKey();
-		LeaveApply a=leavemapper.getLeaveApply(Integer.parseInt(businesskey));
+		BimLeaveApply a=bimLeavemapper.getBimLeaveApply(Integer.parseInt(businesskey));
 		a.setLeave_type(leave.getLeave_type());
 		a.setStart_time(leave.getStart_time());
 		a.setEnd_time(leave.getEnd_time());
@@ -164,7 +135,7 @@ public class LeaveServiceImpl implements LeaveService{
 		Map<String,Object> variables=new HashMap<String,Object>();
 		variables.put("reapply", reapply);
 		if(reapply.equals("true")){
-			leavemapper.updateByPrimaryKey(a);
+			bimLeavemapper.updateByPrimaryKey(a);
 			taskservice.complete(taskid,variables);
 		}else
 			taskservice.complete(taskid,variables);

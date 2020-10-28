@@ -220,14 +220,14 @@
         <omgdi:waypoint x="458.0" y="268.0"></omgdi:waypoint>
         <omgdi:waypoint x="358.0" y="267.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="84.0" x="316.0" y="181.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="84.0" x="301.0" y="166.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="进入付费子流程" id="BPMNEdge_进入付费子流程">
         <omgdi:waypoint x="325.0" y="188.0"></omgdi:waypoint>
         <omgdi:waypoint x="480.0" y="181.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="14.0" width="100.0" x="350.0" y="189.0"></omgdc:Bounds>
+          <omgdc:Bounds height="14.0" width="84.0" x="350.0" y="189.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow21" id="BPMNEdge_flow21">
