@@ -28,15 +28,62 @@
 					<div class="no-move"></div>
 				</div>
 				<div class="box-content">
-				<div style="margin-left:50px">
-			      <img src="../img/current.png"/>
-			      <div id="#current_text">
+				<!-- <div style="margin-left:50px;margin-right:90%;background:green">
           			<p><span>发起申请</span></p>
-        		  </div>
 			      <img src="../img/line.png"/>
-				</div>
+				</div> -->
 					<form role="form" action="startbimleave" method="post">
-						<div class="form-group">
+						<table width="100%" border="1" >
+							<tr>
+								<td bgcolor="#FF9966">
+									<label>申请人</label>
+								</td>
+								<td>
+									<input class="form-control" id="applyName" name="applyName"/>
+								</td>
+								<td bgcolor="#FF9966">
+									<label>请假类型</label>
+								</td>
+								<td>
+									<select name="leave_type" class="form-control">
+										<option value="事假">事假</option>
+										<option value="病假">病假</option>
+										<option value="年假">年假</option>
+										<option value="丧假">丧假</option>
+										<option value="产假">产假</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td bgcolor="#FF9966">
+									<label class="control-label">开始时间</label> 
+								</td>
+								<td>
+									<input id="start" class="form-control" name="start_time" placeholder="开始时间"/><span class="fa fa-calendar txt-danger form-control-feedback"></span>
+								</td>
+								<td bgcolor="#FF9966">
+									<label>结束时间</label>
+								</td>
+								<td>
+									<input id="end" class="form-control" name="end_time" placeholder="结束时间"/><span class="fa fa-calendar txt-danger form-control-feedback"></span>
+								</td>
+							</tr>
+							<tr>
+								<td bgcolor="#FF9966">
+									<label>请假原因</label>
+								</td>
+								<td colspan="3">
+									<textarea id="reason" class="form-control" name="reason" rows="3" maxlength="200"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="4" align="right">
+									<button id="btn" type="button" class="btn btn-primary">开始申请</button>&nbsp;&nbsp;&nbsp;
+									<button type="reset" style="border-right: 50Px" class="btn btn-primary">重置</button>
+								</td>
+							</tr>
+						</table>
+						<!-- <div class="form-group" style="">
 							<label>请假类型</label> 
 							<select name="leave_type" class="form-control">
 								<option value="事假">事假</option>
@@ -59,7 +106,7 @@
 							<textarea class="form-control" name="reason" rows="3"></textarea>
 						</div>
 						<button id="btn" type="button" class="btn btn-primary">开始申请</button>
-						<button type="reset" class="btn btn-primary">重置</button>
+						<button type="reset" class="btn btn-primary">重置</button> -->
 						
 						
 					</form>
@@ -71,6 +118,30 @@
 <script type="text/javascript">
 $(document).ready(function(){
 	$("#btn").click(function(){
+		var startTime = document.getElementById("start").value;
+		var endTime = document.getElementById("end").value;
+		var reason = document.getElementById("reason").value;
+		if (reason == null || reason == "" || reason == 'undefined') {
+			alert("请假原因不能为空");
+			return;
+		}
+		if (startTime == null || startTime == "" || startTime == 'undefined') {
+			alert("开始时间不能为空");
+			return;
+		}
+		if (endTime == null || endTime == "" || endTime == 'undefined') {
+			alert("结束时间不能为空");
+			return;
+		}
+		
+		var start = Date.parse(new Date(startTime.replace(/-|\/|\,/g, "\/")));
+        var end = Date.parse(new Date(endTime.replace(/-|\/|\,/g, "\/")));//new Date只认 2009/1/11形式字符串
+
+        if (start > end) {
+            alert("结束时间不能在开始时间之前！");
+            return;
+        }
+		
 		$.post("startbimleave",$("form").serialize(),function(){
 			alert("申请成功");
 			LoadAjaxContent("bimapply");
