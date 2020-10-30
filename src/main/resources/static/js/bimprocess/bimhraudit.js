@@ -11,7 +11,7 @@
 		    },
 		    "commands": function(column, row)
 		    {
-		            return "<button class=\"btn btn-xs btn-default ajax-link command-run1\" data-row-id=\"" + row.taskid + "\">处理</button>";
+		            return "<button class=\"btn btn-xs btn-default ajax-link command-run1\" data-row-id=\"" + row.taskid + "\" data-proc-id=\"" + row.process_instance_id + "\">处理</button>";
 		    }
 	    	}
 	    
@@ -19,7 +19,9 @@
 	    		{
 	    	    grid.find(".command-run1").on("click", function(e)
 	    	    {
+	    	    	debugger
 	    	    	var taskid=$(this).data("row-id");
+	    	    	var procInstId=$(this).data("proc-id");
 	    	    	$.post("dealBimTask",{"taskid":taskid},function(data){
 	    	    		var obj = data;
 	    	    		$("#reason").val(obj.reason);
@@ -32,7 +34,7 @@
 	    	    	});
 	    	    	$("#dept").show();
 	    	    	$("#btn").click(function(){
-	    		    	$.post("hrcomplete/"+taskid,$("form").serialize(),function(a){
+	    		    	$.post("hrcomplete/"+taskid+"/"+procInstId,$("form").serialize(),function(a){
 	    		    		alert("处理成功");
 	    		    		LoadAjaxContent("bimhraudit");
 	    		    	});
@@ -44,6 +46,6 @@
 	    });
 	  });
 	  
-	  function getLocalTime(nS) {  
- return new Date(parseInt(nS)).toLocaleString().replace(/:\d{1,2}$/,' ');  
+function getLocalTime(nS) {  
+	return new Date(parseInt(nS)).toLocaleString().replace(/:\d{1,2}$/,' ');  
 }

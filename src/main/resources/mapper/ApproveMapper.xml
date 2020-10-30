@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cbs.mapper.ApproveMapper">
+	<resultMap id="BaseResultMap" type="com.cbs.po.Approve">
+	    <id column="id" jdbcType="INTEGER" property="id" />
+	    <result column="proc_inst_id" jdbcType="VARCHAR" property="proc_inst_id" />
+	    <result column="act_id" jdbcType="VARCHAR" property="act_id" />
+	    <result column="task_id" jdbcType="VARCHAR" property="task_id" />
+	    <result column="create_time" jdbcType="VARCHAR" property="create_time" />
+	    <result column="approved" jdbcType="VARCHAR" property="approved" />
+	    <result column="act_name" jdbcType="VARCHAR" property="act_name" />
+	</resultMap>
+	
+	<select id="getApproveById" resultType="com.cbs.po.Approve" parameterType="int">
+		select * from approve where id=#{id} 
+	</select>
+	
+	<select id="getApproveByActId" resultType="com.cbs.po.Approve" parameterType="String">
+		select * from approve where id=#{act_id} 
+	</select>
+	
+	<insert id="save" useGeneratedKeys="true" keyProperty="id" parameterType="com.cbs.po.Approve">
+	  insert into approve (proc_inst_id,act_id,task_id,create_time,approved,act_name)
+	  values (#{proc_inst_id},#{act_id},#{task_id},#{create_time},#{approved},#{act_name})
+	</insert>
+</mapper>

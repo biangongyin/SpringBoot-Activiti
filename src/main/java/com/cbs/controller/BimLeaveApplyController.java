@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -40,6 +41,7 @@ import com.cbs.po.Role;
 import com.cbs.po.Role_permission;
 import com.cbs.po.User;
 import com.cbs.po.User_role;
+import com.cbs.service.ApproveService;
 import com.cbs.service.BimLeaveService;
 import com.cbs.service.SystemService;
 
@@ -64,6 +66,9 @@ public class BimLeaveApplyController {
 	HistoryService histiryservice;
 	@Autowired
 	SystemService systemservice;
+	
+	@Resource
+	ApproveService approveService;
 
 	/**
 	 * BIM实施细则申请流程
@@ -383,9 +388,9 @@ public class BimLeaveApplyController {
 	 * @param req
 	 * @return
 	 */
-	@RequestMapping(value = "/hrcomplete/{taskid}", method = RequestMethod.POST)
+	@RequestMapping(value = "/hrcomplete/{taskid}/{procInstId}", method = RequestMethod.POST)
 	@ResponseBody
-	public MSG hrcomplete(HttpSession session, @PathVariable("taskid") String taskid, HttpServletRequest req) {
+	public MSG hrcomplete(HttpSession session, @PathVariable("taskid") String taskid,@PathVariable("procInstId") String procInstId, HttpServletRequest req) {
 		String userid = (String) session.getAttribute("username");
 		Map<String, Object> variables = new HashMap<String, Object>();
 		String approve = req.getParameter("hrapprove");
@@ -394,6 +399,8 @@ public class BimLeaveApplyController {
 		taskservice.claim(taskid, userid);
 		//根据任务id完成自己节点的任务
 		taskservice.complete(taskid, variables);
+		approveService.save(taskid,procInstId,approve);
+		
 		return new MSG("success");
 	}
 	

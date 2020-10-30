@@ -212,3 +212,15 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2016-11-18 14:12:37
+
+CREATE TABLE IF NOT EXISTS `approve` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `proc_inst_id` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '流程实例id',
+  `act_id` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '审批节点',
+  `task_id` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '任务id',
+  `create_time` varchar(64) COLLATE utf8_bin DEFAULT NULL COMMENT '审批时间',
+  `approved` varchar(120) COLLATE utf8_bin DEFAULT NULL COMMENT '审批意见',
+  `act_name` varchar(100) COLLATE utf8_bin DEFAULT NULL COMMENT '节点名称',
+  PRIMARY KEY (`id`),
+  KEY `idx_proc_inst_id_task_id` (`proc_inst_id`,`task_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
